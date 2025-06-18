@@ -7,6 +7,8 @@ import AppLayout from '@/components/layout/AppLayout'
 import LoginPage from '@/pages/LoginPage'
 import RegisterPage from '@/pages/RegisterPage'
 import DashboardPage from '@/pages/DashboardPage'
+import OrganizationsPage from '@/pages/OrganizationsPage'
+import CreateProjectPage from '@/pages/CreateProjectPage'
 import IssueDetailPage from '@/pages/IssueDetailPage'
 import ProjectIssuesPage from '@/pages/ProjectIssuesPage'
 
@@ -72,12 +74,7 @@ const dashboardRoute = createRoute({
 const organizationsRoute = createRoute({
   getParentRoute: () => protectedLayoutRoute,
   path: '/organizations',
-  component: () => (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900">Organizations</h1>
-      <p className="mt-2 text-gray-600">Manage your organizations here.</p>
-    </div>
-  )
+  component: OrganizationsPage
 })
 
 // Organization detail route
@@ -114,6 +111,13 @@ const orgProjectsRoute = createRoute({
       <p className="mt-2 text-gray-600">Manage organization projects.</p>
     </div>
   )
+})
+
+// Create project route
+const createProjectRoute = createRoute({
+  getParentRoute: () => protectedLayoutRoute,
+  path: '/organizations/$orgSlug/projects/new',
+  component: CreateProjectPage
 })
 
 // Project detail route
@@ -181,6 +185,7 @@ const routeTree = rootRoute.addChildren([
     organizationDetailRoute,
     projectsRoute,
     orgProjectsRoute,
+    createProjectRoute,
     projectDetailRoute,
     issuesRoute,
     projectIssuesRoute,

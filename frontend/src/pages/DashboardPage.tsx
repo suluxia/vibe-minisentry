@@ -53,8 +53,8 @@ export const DashboardPage = () => {
     data: projects = [], 
     isLoading: projectsLoading 
   } = useQuery({
-    queryKey: ['projects', selectedOrganization?.slug],
-    queryFn: () => apiClient.getProjects(selectedOrganization!.slug),
+    queryKey: ['projects', selectedOrganization?.id],
+    queryFn: () => apiClient.getProjects(selectedOrganization!.id),
     enabled: !!selectedOrganization
   })
 
@@ -63,9 +63,9 @@ export const DashboardPage = () => {
     data: issuesData, 
     isLoading: issuesLoading 
   } = useQuery({
-    queryKey: ['issues', selectedOrganization?.slug, selectedProject?.slug, issueFilters],
-    queryFn: () => apiClient.getIssues(selectedOrganization!.slug, selectedProject!.slug, issueFilters),
-    enabled: !!selectedOrganization && !!selectedProject
+    queryKey: ['issues', selectedProject?.id, issueFilters],
+    queryFn: () => apiClient.getIssues(selectedProject!.id, issueFilters),
+    enabled: !!selectedProject
   })
 
   // Load issue stats for selected project
@@ -73,20 +73,20 @@ export const DashboardPage = () => {
     data: issueStats, 
     isLoading: statsLoading 
   } = useQuery({
-    queryKey: ['issue-stats', selectedOrganization?.slug, selectedProject?.slug],
-    queryFn: () => apiClient.getIssueStats(selectedOrganization!.slug, selectedProject!.slug),
-    enabled: !!selectedOrganization && !!selectedProject
+    queryKey: ['issue-stats', selectedProject?.id],
+    queryFn: () => apiClient.getIssueStats(selectedProject!.id),
+    enabled: !!selectedProject
   })
 
   // Auto-select first organization and project if none selected
   useEffect(() => {
-    if (!selectedOrganization && organizations.length > 0) {
+    if (!selectedOrganization && organizations && organizations.length > 0) {
       setSelectedOrganization(organizations[0])
     }
   }, [organizations, selectedOrganization, setSelectedOrganization])
 
   useEffect(() => {
-    if (!selectedProject && projects.length > 0) {
+    if (!selectedProject && projects && projects.length > 0) {
       setSelectedProject(projects[0])
     }
   }, [projects, selectedProject, setSelectedProject])
@@ -162,7 +162,7 @@ export const DashboardPage = () => {
           />
           {selectedOrganization && (
             <ProjectSelector
-              organizationSlug={selectedOrganization.slug}
+              organizationId={selectedOrganization.id}
               selectedProjectSlug={selectedProject?.slug}
               onProjectChange={setSelectedProject}
               className="w-48"

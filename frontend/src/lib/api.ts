@@ -142,7 +142,7 @@ class ApiClient {
   }
 
   private async performTokenRefresh(refreshToken: string): Promise<string> {
-    const response = await axios.post<AuthResponse>('/api/auth/refresh', {
+    const response = await axios.post<AuthResponse>('/api/v1/auth/refresh', {
       refresh_token: refreshToken
     })
 
@@ -153,14 +153,14 @@ class ApiClient {
 
   // Authentication methods
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await this.axios.post<AuthResponse>('/auth/login', credentials)
+    const response = await this.axios.post<AuthResponse>('/v1/auth/login', credentials)
     const { access_token, refresh_token } = response.data
     this.setTokens(access_token, refresh_token)
     return response.data
   }
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await this.axios.post<AuthResponse>('/auth/register', data)
+    const response = await this.axios.post<AuthResponse>('/v1/auth/register', data)
     const { access_token, refresh_token } = response.data
     this.setTokens(access_token, refresh_token)
     return response.data
@@ -168,14 +168,14 @@ class ApiClient {
 
   async logout(): Promise<void> {
     try {
-      await this.axios.post('/auth/logout')
+      await this.axios.post('/v1/auth/logout')
     } finally {
       this.clearTokens()
     }
   }
 
   async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    const response = await this.axios.post<AuthResponse>('/auth/refresh', {
+    const response = await this.axios.post<AuthResponse>('/v1/auth/refresh', {
       refresh_token: refreshToken
     })
     const { access_token, refresh_token: newRefreshToken } = response.data
@@ -185,148 +185,148 @@ class ApiClient {
 
   // User methods
   async getCurrentUser(): Promise<User> {
-    const response = await this.axios.get<User>('/users/me')
+    const response = await this.axios.get<User>('/v1/auth/profile')
     return response.data
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<User> {
-    const response = await this.axios.put<User>('/users/me', data)
+    const response = await this.axios.put<User>('/v1/auth/profile', data)
     return response.data
   }
 
   async changePassword(data: ChangePasswordRequest): Promise<void> {
-    await this.axios.put('/users/me/password', data)
+    await this.axios.put('/v1/auth/password', data)
   }
 
   // Organization methods
   async getOrganizations(): Promise<Organization[]> {
-    const response = await this.axios.get<{ organizations: Organization[] }>('/organizations')
-    return response.data.organizations
+    const response = await this.axios.get<{ organizations: Organization[] | null }>('/v1/organizations')
+    return response.data.organizations || []
   }
 
   async getOrganization(slug: string): Promise<Organization> {
-    const response = await this.axios.get<Organization>(`/organizations/${slug}`)
+    const response = await this.axios.get<Organization>(`/v1/organizations/${slug}`)
     return response.data
   }
 
   async createOrganization(data: CreateOrganizationRequest): Promise<Organization> {
-    const response = await this.axios.post<Organization>('/organizations', data)
+    const response = await this.axios.post<Organization>('/v1/organizations', data)
     return response.data
   }
 
   async updateOrganization(slug: string, data: UpdateOrganizationRequest): Promise<Organization> {
-    const response = await this.axios.put<Organization>(`/organizations/${slug}`, data)
+    const response = await this.axios.put<Organization>(`/v1/organizations/${slug}`, data)
     return response.data
   }
 
   async deleteOrganization(slug: string): Promise<void> {
-    await this.axios.delete(`/organizations/${slug}`)
+    await this.axios.delete(`/v1/organizations/${slug}`)
   }
 
   async getOrganizationMembers(slug: string): Promise<OrganizationMember[]> {
-    const response = await this.axios.get<{ members: OrganizationMember[] }>(`/organizations/${slug}/members`)
+    const response = await this.axios.get<{ members: OrganizationMember[] }>(`/v1/organizations/${slug}/members`)
     return response.data.members
   }
 
   async addOrganizationMember(slug: string, data: AddMemberRequest): Promise<OrganizationMember> {
-    const response = await this.axios.post<OrganizationMember>(`/organizations/${slug}/members`, data)
+    const response = await this.axios.post<OrganizationMember>(`/v1/organizations/${slug}/members`, data)
     return response.data
   }
 
   async updateMemberRole(slug: string, userId: string, data: UpdateMemberRoleRequest): Promise<OrganizationMember> {
-    const response = await this.axios.put<OrganizationMember>(`/organizations/${slug}/members/${userId}`, data)
+    const response = await this.axios.put<OrganizationMember>(`/v1/organizations/${slug}/members/${userId}`, data)
     return response.data
   }
 
   async removeOrganizationMember(slug: string, userId: string): Promise<void> {
-    await this.axios.delete(`/organizations/${slug}/members/${userId}`)
+    await this.axios.delete(`/v1/organizations/${slug}/members/${userId}`)
   }
 
   // Project methods
-  async getProjects(orgSlug: string): Promise<Project[]> {
-    const response = await this.axios.get<{ projects: Project[] }>(`/organizations/${orgSlug}/projects`)
-    return response.data.projects
+  async getProjects(orgId: string): Promise<Project[]> {
+    const response = await this.axios.get<{ projects: Project[] | null }>(`/v1/organizations/${orgId}/projects`)
+    return response.data.projects || []
   }
 
   async getProject(orgSlug: string, projectSlug: string): Promise<Project> {
-    const response = await this.axios.get<Project>(`/organizations/${orgSlug}/projects/${projectSlug}`)
+    const response = await this.axios.get<Project>(`/v1/organizations/${orgSlug}/projects/${projectSlug}`)
     return response.data
   }
 
-  async createProject(orgSlug: string, data: CreateProjectRequest): Promise<Project> {
-    const response = await this.axios.post<Project>(`/organizations/${orgSlug}/projects`, data)
+  async createProject(orgId: string, data: CreateProjectRequest): Promise<Project> {
+    const response = await this.axios.post<Project>(`/v1/organizations/${orgId}/projects`, data)
     return response.data
   }
 
   async updateProject(orgSlug: string, projectSlug: string, data: UpdateProjectRequest): Promise<Project> {
-    const response = await this.axios.put<Project>(`/organizations/${orgSlug}/projects/${projectSlug}`, data)
+    const response = await this.axios.put<Project>(`/v1/organizations/${orgSlug}/projects/${projectSlug}`, data)
     return response.data
   }
 
   async deleteProject(orgSlug: string, projectSlug: string): Promise<void> {
-    await this.axios.delete(`/organizations/${orgSlug}/projects/${projectSlug}`)
+    await this.axios.delete(`/v1/organizations/${orgSlug}/projects/${projectSlug}`)
   }
 
   async updateProjectConfiguration(orgSlug: string, projectSlug: string, data: ProjectConfigurationRequest): Promise<Project> {
-    const response = await this.axios.put<Project>(`/organizations/${orgSlug}/projects/${projectSlug}/configuration`, data)
+    const response = await this.axios.put<Project>(`/v1/organizations/${orgSlug}/projects/${projectSlug}/configuration`, data)
     return response.data
   }
 
   async regenerateProjectKey(orgSlug: string, projectSlug: string): Promise<ProjectKeyResponse> {
-    const response = await this.axios.post<ProjectKeyResponse>(`/organizations/${orgSlug}/projects/${projectSlug}/regenerate-key`)
+    const response = await this.axios.post<ProjectKeyResponse>(`/v1/organizations/${orgSlug}/projects/${projectSlug}/regenerate-key`)
     return response.data
   }
 
   // Issue methods
-  async getIssues(orgSlug: string, projectSlug: string, filters?: IssueFilters): Promise<PaginatedResponse<Issue>> {
-    const response = await this.axios.get<PaginatedResponse<Issue>>(`/organizations/${orgSlug}/projects/${projectSlug}/issues`, {
+  async getIssues(projectId: string, filters?: IssueFilters): Promise<PaginatedResponse<Issue>> {
+    const response = await this.axios.get<PaginatedResponse<Issue>>(`/v1/projects/${projectId}/issues`, {
       params: filters
     })
     return response.data
   }
 
   async getIssue(orgSlug: string, projectSlug: string, issueId: string): Promise<Issue> {
-    const response = await this.axios.get<Issue>(`/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}`)
+    const response = await this.axios.get<Issue>(`/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}`)
     return response.data
   }
 
   async updateIssue(orgSlug: string, projectSlug: string, issueId: string, data: IssueUpdateRequest): Promise<Issue> {
-    const response = await this.axios.put<Issue>(`/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}`, data)
+    const response = await this.axios.put<Issue>(`/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}`, data)
     return response.data
   }
 
   async deleteIssue(orgSlug: string, projectSlug: string, issueId: string): Promise<void> {
-    await this.axios.delete(`/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}`)
+    await this.axios.delete(`/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}`)
   }
 
   async getIssueComments(orgSlug: string, projectSlug: string, issueId: string, page = 1, limit = 25): Promise<PaginatedResponse<IssueComment>> {
     const response = await this.axios.get<PaginatedResponse<IssueComment>>(
-      `/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}/comments`,
+      `/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}/comments`,
       { params: { page, limit } }
     )
     return response.data
   }
 
   async addIssueComment(orgSlug: string, projectSlug: string, issueId: string, data: IssueCommentRequest): Promise<IssueComment> {
-    const response = await this.axios.post<IssueComment>(`/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}/comments`, data)
+    const response = await this.axios.post<IssueComment>(`/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}/comments`, data)
     return response.data
   }
 
   async getIssueActivity(orgSlug: string, projectSlug: string, issueId: string, page = 1, limit = 25): Promise<PaginatedResponse<IssueActivity>> {
     const response = await this.axios.get<PaginatedResponse<IssueActivity>>(
-      `/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}/activity`,
+      `/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/${issueId}/activity`,
       { params: { page, limit } }
     )
     return response.data
   }
 
-  async getIssueStats(orgSlug: string, projectSlug: string): Promise<IssueStats> {
-    const response = await this.axios.get<IssueStats>(`/organizations/${orgSlug}/projects/${projectSlug}/issues/stats`)
+  async getIssueStats(projectId: string): Promise<IssueStats> {
+    const response = await this.axios.get<IssueStats>(`/v1/projects/${projectId}/issues/stats`)
     return response.data
   }
 
   async bulkUpdateIssues(orgSlug: string, projectSlug: string, data: BulkUpdateIssuesRequest): Promise<BulkUpdateIssuesResponse> {
-    const response = await this.axios.post<BulkUpdateIssuesResponse>(`/organizations/${orgSlug}/projects/${projectSlug}/issues/bulk-update`, data)
+    const response = await this.axios.post<BulkUpdateIssuesResponse>(`/v1/organizations/${orgSlug}/projects/${projectSlug}/issues/bulk-update`, data)
     return response.data
   }
 

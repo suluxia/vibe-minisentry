@@ -82,7 +82,7 @@ export const Sidebar = () => {
                 Project
               </label>
               <ProjectSelector
-                organizationSlug={selectedOrganization.slug}
+                organizationId={selectedOrganization.id}
                 selectedProjectSlug={selectedProject?.slug}
                 onProjectChange={setSelectedProject}
                 placeholder="Select project"

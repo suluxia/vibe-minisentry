@@ -5,7 +5,7 @@ import { Select, Loading } from '@/components/ui'
 import { apiClient } from '@/lib/api'
 
 interface ProjectSelectorProps {
-  organizationSlug: string
+  organizationId: string
   selectedProjectSlug?: string
   onProjectChange: (project: Project | null) => void
   placeholder?: string
@@ -13,7 +13,7 @@ interface ProjectSelectorProps {
 }
 
 export const ProjectSelector = ({
-  organizationSlug,
+  organizationId,
   selectedProjectSlug,
   onProjectChange,
   placeholder = "Select a project",
@@ -24,9 +24,9 @@ export const ProjectSelector = ({
     isLoading,
     error
   } = useQuery({
-    queryKey: ['projects', organizationSlug],
-    queryFn: () => apiClient.getProjects(organizationSlug),
-    enabled: !!organizationSlug
+    queryKey: ['projects', organizationId],
+    queryFn: () => apiClient.getProjects(organizationId),
+    enabled: !!organizationId
   })
 
   const selectedProject = projects.find(p => p.slug === selectedProjectSlug)

@@ -30,18 +30,18 @@ func NewErrorHandler(errorService *services.ErrorService) *ErrorHandler {
 
 // RegisterRoutes registers error ingestion routes
 func (eh *ErrorHandler) RegisterRoutes(r chi.Router, projectMiddleware *middleware.ProjectMiddleware) {
-	// Sentry-compatible error ingestion endpoint
-	r.Route("/api", func(r chi.Router) {
+	// Sentry-compatible error ingestion endpoint (specific path to avoid conflicts)
+	r.Group(func(r chi.Router) {
 		r.Use(projectMiddleware.DSNAuth) // Use DSN authentication
-		r.Post("/{project_id}/store/", eh.sentryStoreHandler)
+		r.Post("/api/{project_id}/store/", eh.sentryStoreHandler)
 	})
 
-	// Alternative error ingestion endpoints (moved to avoid conflicts)
-	r.Route("/ingest", func(r chi.Router) {
+	// Alternative error ingestion endpoints
+	r.Route("/api/v1/errors", func(r chi.Router) {
 		r.Use(projectMiddleware.DSNAuth) // Use DSN authentication
-		r.Post("/errors", eh.errorIngestHandler)
-		r.Get("/errors/stats", eh.errorStatsHandler)
-		r.Get("/errors/issues/{issue_id}/events", eh.issueEventsHandler)
+		r.Post("/ingest", eh.errorIngestHandler)
+		r.Get("/stats", eh.errorStatsHandler)
+		r.Get("/issues/{issue_id}/events", eh.issueEventsHandler)
 	})
 }
 
